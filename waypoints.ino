@@ -10,21 +10,27 @@
  */
 
 #define _USE_MATH_DEFINES
-
 #include <SoftwareSerial.h>
-
 
 
 ////////////////////////////////////
 // What Matters to you - Settings //
 ////////////////////////////////////
-const int lcd_pin = 3;
+
+// Where to?
 const double waypoint_lat = 37.7070794;
 const double waypoint_lon = -79.2889216;
+
+// Assumed average speed in MPH (Randomization indexer)
+const int avgSpeed = 30;
+
 
 ///////////////////
 // LCD Constants //
 ///////////////////
+const int lcd_pin = 3;
+
+// ASCII control codes
 const int lcd_clear = 12;
 const int lcd_lightOn = 17;
 const int lcd_lightOff = 18;
@@ -185,14 +191,28 @@ void loop() {
         }
     }
     
+    ///////////////////////////////////////////
+    // GPS-Lock Confirmed | Engagement Layer //
+    ///////////////////////////////////////////
     if ( latitude != 0 && longitude != 0 ) {
+        lcd.write(212);
+        lcd.write(220);
+        delay(5);
         lcd.write( lcd_lightOn );
         delay(5);
         lcd.write( lcd_clear );
         delay(5);
         lcd.print("Distance:\r");
-        lcd.print( distance( latitude, longitude, waypoint_lat, waypoint_lon ));
+        lcd.print( distance( latitude, longitude, waypoint_lat, waypoint_lon ), 4);
         lcd.print( "km" );
+        
+        delay( 5000 );
+        
+        lcd.write( lcd_clear );
+        delay(5);
+        lcd.write( lcd_lightOff );
+        
+        delay( 20000 );
     }
 }
 
